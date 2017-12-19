@@ -24,13 +24,17 @@ class BasicBlock(nn.Module):
   def forward(self, x):
     if not self.equalInOut:
       x = self.relu1(self.bn1(x))
+      out = self.conv1(x)
     else:
-      out = self.relu1(self.bn1(x))
-    out = self.conv1(self.equalInOut and out or x)
+      out = self.conv1(self.relu1(self.bn1(x)))
+
     if self.droprate > 0:
       out = F.dropout(out, p=self.droprate, training=self.training)
     out = self.conv2(self.relu2(self.bn2(out)))
-    return torch.add((not self.equalInOut) and self.convShortcut(x) or x, out)
+    if not self.equalInOut:
+      return torch.add(self.convShortcut(x), out)
+    else:
+      return torch.add(x, out)
 
 
 class NetworkBlock(nn.Module):
@@ -57,7 +61,7 @@ class WideResNet(nn.Module):
     nChannels = [16, 16 * widen_factor,
                   32 * widen_factor, 64 * widen_factor]
     assert((depth - 4) % 6 == 0)
-    n = (depth - 4) / 6
+    n = (depth - 4) // 6
     block = BasicBlock
     # 1st conv before any network block
     self.conv1 = nn.Conv2d(3, nChannels[0], kernel_size=3, stride=1,
