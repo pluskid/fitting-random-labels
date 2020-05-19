@@ -114,7 +114,7 @@ def train_epoch(train_loader, model, criterion, optimizer, epoch, args):
   model.train()
 
   for i, (input, target) in enumerate(train_loader):
-    target = target.cuda(async=True)
+    target = target.cuda(non_blocking=True)
     input = input.cuda()
     input_var = torch.autograd.Variable(input)
     target_var = torch.autograd.Variable(target)
@@ -146,7 +146,7 @@ def validate_epoch(val_loader, model, criterion, epoch, args):
   model.eval()
 
   for i, (input, target) in enumerate(val_loader):
-    target = target.cuda(async=True)
+    target = target.cuda(non_blocking=True)
     input = input.cuda()
     input_var = torch.autograd.Variable(input, volatile=True)
     target_var = torch.autograd.Variable(target, volatile=True)
