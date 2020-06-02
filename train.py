@@ -125,8 +125,8 @@ def train_epoch(train_loader, model, criterion, optimizer, epoch, args):
 
     # measure accuracy and record loss
     prec1 = accuracy(output.data, target, topk=(1,))[0]
-    losses.update(loss.data[0], input.size(0))
-    top1.update(prec1[0], input.size(0))
+    losses.update(loss.item(), input.size(0))
+    top1.update(prec1.item(), input.size(0))
 
     # compute gradient and do SGD step
     optimizer.zero_grad()
@@ -157,8 +157,8 @@ def validate_epoch(val_loader, model, criterion, epoch, args):
 
     # measure accuracy and record loss
     prec1 = accuracy(output.data, target, topk=(1,))[0]
-    losses.update(loss.data[0], input.size(0))
-    top1.update(prec1[0], input.size(0))
+    losses.update(loss.item(), input.size(0))
+    top1.update(prec1.item(), input.size(0))
 
   return losses.avg, top1.avg
 

@@ -25,7 +25,7 @@ class CIFAR10RandomLabels(datasets.CIFAR10):
       self.corrupt_labels(corrupt_prob)
 
   def corrupt_labels(self, corrupt_prob):
-    labels = np.array(self.train_labels if self.train else self.test_labels)
+    labels = np.array(self.targets)
     np.random.seed(12345)
     mask = np.random.rand(len(labels)) <= corrupt_prob
     rnd_labels = np.random.choice(self.n_classes, mask.sum())
@@ -34,8 +34,5 @@ class CIFAR10RandomLabels(datasets.CIFAR10):
     # builtin int type, otherwise pytorch will fail...
     labels = [int(x) for x in labels]
 
-    if self.train:
-      self.train_labels = labels
-    else:
-      self.test_labels = labels
+    self.targets = labels
 
